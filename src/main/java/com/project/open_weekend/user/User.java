@@ -1,19 +1,14 @@
 package com.project.open_weekend.user;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
 public class User {
     @Id
@@ -40,5 +35,29 @@ public class User {
     private boolean isActive;
 
     private boolean isNotLocked;
+
+    public User(
+            String firstName,
+            String lastName,
+            String email,
+            String phoneNumber,
+            String password,
+            LocalDateTime dateJoined,
+            String role,
+            String[] authorities,
+            boolean isActive,
+            boolean isNotLocked
+    ){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.dateJoined = dateJoined;
+        this.role = role;
+        this.authorities = authorities;
+        this.isActive = isActive;
+        this.isNotLocked = isNotLocked;
+    }
 }
 
