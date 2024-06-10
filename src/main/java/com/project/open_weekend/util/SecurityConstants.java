@@ -6,7 +6,7 @@ public class SecurityConstants {
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
     public static final String JWT_ISSUER = "Open Weekend";
     public static final String AUTHORITIES = "authorities";
-    public static final String AUDIENCE = "digital-lender-audience";
+    public static final String AUDIENCE = "open-weekend-application";
     public static final String OPTIONS_HTTP_METHOD = "OPTIONS";
     public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
     public static final String FORBIDDEN_MESSAGE = "You need to log in to access this page";
