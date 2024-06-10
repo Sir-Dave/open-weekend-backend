@@ -1,0 +1,9 @@
+package com.project.open_weekend.exception;
+
+public class EntityNotFoundException extends RuntimeException{
+
+    public EntityNotFoundException(String message) {
+        super(message);
+    }
+
+}
