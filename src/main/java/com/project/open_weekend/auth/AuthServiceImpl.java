@@ -36,8 +36,8 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     @Autowired
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
-    private JwtTokenProvider jwtTokenProvider;
-    private AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -88,14 +88,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
-    public ResponseEntity<SignInResponse> loginUser(SignInRequest signInRequest) {
+    public SignInResponse loginUser(SignInRequest signInRequest) {
         authenticateUser(signInRequest.getEmail(), signInRequest.getPassword());
         User user = userService.findUserByEmail(signInRequest.getEmail());
 
         var userPrincipal = new UserPrincipal(user);
         String token = jwtTokenProvider.generateJwtToken(userPrincipal);
-        var response = new SignInResponse(token, UserMapper.mapUserToUserDto(user));
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new SignInResponse(token, UserMapper.mapUserToUserDto(user));
     }
 
     private void authenticateUser(String email, String password){
