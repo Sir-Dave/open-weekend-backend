@@ -59,13 +59,8 @@ public class CustomExceptionHandler implements ErrorController {
     }
 
     @ExceptionHandler(EntityExistsException.class)
-    public ResponseEntity<HttpResponse> userExistsException(EntityExistsException exception){
+    public ResponseEntity<HttpResponse> entityExistsException(EntityExistsException exception){
         return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<HttpResponse> userNotFoundException(EntityNotFoundException exception){
-        return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(PasswordsDoNotMatchException.class)
@@ -91,7 +86,7 @@ public class CustomExceptionHandler implements ErrorController {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<HttpResponse> accountNotFoundException(EntityNotFoundException exception){
+    public ResponseEntity<HttpResponse> entityNotFoundException(EntityNotFoundException exception){
         return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
