@@ -38,10 +38,12 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private LoginAttemptService loginAttemptService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userService.findUserByEmail(username);
+        validateLoginAttempt(user);
         userService.saveUser(user);
         return new UserPrincipal(user);
     }
@@ -58,6 +60,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
                     String.format("User with email %s already exists", email)
             );
         }
+    }
+
+    private void validateLoginAttempt(User user){
+        if (user.isNotLocked())
+            user.setNotLocked(!loginAttemptService.hasExceededMaximumAttempt(user.getEmail()));
+
+        else loginAttemptService.evictUserFromLoginAttemptCache(user.getEmail());
     }
 
     private String encodePassword(String password){
