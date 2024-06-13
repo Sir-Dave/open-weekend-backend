@@ -6,7 +6,7 @@ import com.project.open_weekend.util.Util;
 
 public class UserMapper {
 
-    public UserDto mapUserToUserDto(User user){
+    public static UserDto mapUserToUserDto(User user){
         return new UserDto(
                 user.getId(),
                 user.getFirstName(),
