@@ -1,10 +1,13 @@
 package com.project.open_weekend.user;
 
 
+import com.project.open_weekend.event.Event;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -36,6 +39,9 @@ public class User {
 
     private boolean isNotLocked;
 
+    @OneToMany(mappedBy = "creator", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    private Set<Event> events = new HashSet<>();
+
     public User(
             String firstName,
             String lastName,
@@ -58,6 +64,16 @@ public class User {
         this.authorities = authorities;
         this.isActive = isActive;
         this.isNotLocked = isNotLocked;
+    }
+
+    public void addEvent(Event event){
+        events.add(event);
+        event.setCreator(this);
+    }
+
+    public void removeEvent(Event event){
+        events.remove(event);
+        event.setCreator(null);
     }
 }
 
