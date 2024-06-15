@@ -1,6 +1,7 @@
 package com.project.open_weekend.event;
 
 
+import com.project.open_weekend.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,11 +11,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "events")
-@Getter
-@Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_sequence")
@@ -36,6 +34,10 @@ public class Event {
 
     private String type;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User creator;
+
     @ElementCollection(targetClass = String.class)
     private Set<String> tags;
 
@@ -43,5 +45,9 @@ public class Event {
 
     @ElementCollection(targetClass = String.class)
     private List<String> socialMediaLinks;
+
+    public void addToCreatorEvents(User user){
+        user.addEvent(this);
+    }
 }
 
