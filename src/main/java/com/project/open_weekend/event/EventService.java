@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface EventService {
 
-    Event createEvent(Event event);
+    Event createEvent(EventRequest eventRequest);
     List<Event> findEventListByLocation(String location);
     Event updateEvent(Event event);
     void deleteEventById(Long eventId);

@@ -16,27 +16,43 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @PreAuthorize("")
-    public Event createEvent(Event event) {
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    public Event createEvent(EventRequest eventRequest) {
+        Event event = Event.builder()
+                .name(eventRequest.getName())
+                .description(eventRequest.getDescription())
+                .location(eventRequest.getLocation())
+                .startTime(eventRequest.getStartTime())
+                .endTime(eventRequest.getEndTime())
+                .imageUrl(eventRequest.getImageUrl())
+                .type(eventRequest.getType())
+                .tags(eventRequest.getTags())
+                .socialMediaLinks(eventRequest.getSocialMediaLinks())
+                .isApproved(eventRequest.isApproved())
+                .build();
         return eventRepository.save(event);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public List<Event> findEventListByLocation(String location) {
         return eventRepository.findByLocation(location);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Event updateEvent(Event event) {
         return eventRepository.save(event);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public Event findEventById(Long eventId) {
         return null;
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteEventById(Long eventId) {
         eventRepository.deleteById(eventId);
     }
