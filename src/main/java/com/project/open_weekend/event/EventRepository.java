@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
-    @Query("SELECT e FROM Event e")
+    @Query("SELECT e FROM Event e where e.isApproved")
     Page<Event> getAllEvents(Pageable pageable);
 
     @Query("SELECT e FROM Event e WHERE e.creator.id = ?1")

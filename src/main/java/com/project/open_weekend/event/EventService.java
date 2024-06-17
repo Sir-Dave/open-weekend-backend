@@ -1,17 +1,16 @@
 package com.project.open_weekend.event;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface EventService  {
 
-    List<Event> getAllEvents(int pageNo, int pageSize);
+    List<EventResponse> getAllEvents(int pageNo, int pageSize);
 
-    List<Event> getAllByUser(long userId, int pageNo, int pageSize);
+    List<EventResponse> getAllByUser(long userId, int pageNo, int pageSize);
 
-    Event createEvent(Event event);
-    Event updateEvent(Event event);
-    void deleteEventById(Long eventId);
-    Optional<Event> findEventById(Long eventId);
+    EventResponse createEvent(EventRequest eventRequest);
+    EventResponse updateEvent(EventRequest eventRequest);
+    void deleteEventById(long eventId);
+    EventResponse findEventById(long eventId);
 }

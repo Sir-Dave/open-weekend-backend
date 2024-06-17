@@ -3,16 +3,20 @@ package com.project.open_weekend.event;
 
 import com.project.open_weekend.user.User;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
 @Table(name = "events")
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
+@Getter @Setter @Builder
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_sequence")
@@ -43,8 +47,10 @@ public class Event {
 
     private boolean isApproved;
 
-    @ElementCollection(targetClass = String.class)
-    private List<String> socialMediaLinks;
+    @Type(type = "json")
+    @Convert(disableConversion = true)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> socialMedia = new HashMap<>();
 
     public void addToCreatorEvents(User user){
         user.addEvent(this);
