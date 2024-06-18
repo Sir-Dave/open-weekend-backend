@@ -7,8 +7,7 @@ import java.util.Set;
 
 public interface EventService  {
 
-    List<EventResponse> getAllEvents(int pageNo, int pageSize);
-    List<EventResponse> getAllEventsByStartTime(int pageNo, int pageSize);
+    List<EventResponse> getAllEventsOrderByStartTime(int pageNo, int pageSize);
 
     List<EventResponse> getEventsByLocation(int pageNo, int pageSize, String city);
 

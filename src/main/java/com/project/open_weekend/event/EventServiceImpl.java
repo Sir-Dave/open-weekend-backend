@@ -3,7 +3,6 @@ package com.project.open_weekend.event;
 import com.project.open_weekend.auth.AuthenticatedUserService;
 import com.project.open_weekend.exception.EntityNotFoundException;
 import com.project.open_weekend.mapper.EventMapper;
-import com.project.open_weekend.user.UserService;
 import com.project.open_weekend.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
@@ -27,18 +25,10 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private final EventRepository eventRepository;
-    private final UserService userService;
     private final AuthenticatedUserService authUserService;
 
     @Override
-    public List<EventResponse> getAllEvents(int pageNo, int pageSize) {
-        var pageable = PageRequest.of(pageNo, pageSize);
-        Page<Event> pagedResult = eventRepository.getAllEvents(pageable);
-        return mapToResponse(pagedResult);
-    }
-
-    @Override
-    public List<EventResponse> getAllEventsByStartTime(int pageNo, int pageSize) {
+    public List<EventResponse> getAllEventsOrderByStartTime(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Event> pagedResult = eventRepository.findAllByOrderByStartTime(pageable);
         return mapToResponse(pagedResult);
@@ -88,8 +78,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
-    //@PreAuthorize("@authenticatedUserService.hasId(#eventRequest.creatorId)")
     public EventResponse updateEvent(
             long eventId, String name, String description,
             String location, String startTime, String endTime,
@@ -105,13 +93,13 @@ public class EventServiceImpl implements EventService {
             throw new AccessDeniedException("You do not have permission to edit this event");
         }
 
-        if (!name.isBlank())
+        if (name != null)
             event.setName(name);
 
-        if (!description.isBlank())
+        if (description != null)
             event.setDescription(description);
 
-        if (!location.isBlank())
+        if (location != null)
             event.setLocation(location);
 
         if (startTime != null && endTime != null){
@@ -123,10 +111,10 @@ public class EventServiceImpl implements EventService {
         if (image != null)
             event.setImageUrl(uploadImage(image));
 
-        if (!type.isBlank())
+        if (type != null)
             event.setType(type);
 
-        if (!tags.isEmpty())
+        if (tags != null)
             event.setTags(tags);
 
         var updatedEvent = eventRepository.save(event);
@@ -139,7 +127,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public EventResponse findEventById(long eventId) {
         var event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("No event with id %s was found", eventId))
