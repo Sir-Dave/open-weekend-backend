@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +31,28 @@ public class EventServiceImpl implements EventService {
     public List<EventResponse> getAllEvents(int pageNo, int pageSize) {
         var pageable = PageRequest.of(pageNo, pageSize);
         Page<Event> pagedResult = eventRepository.getAllEvents(pageable);
-        List<Event> events = pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<>();
-        return events.stream().map(EventMapper::mapEventToEventResponse).collect(Collectors.toList());
+        return mapToResponse(pagedResult);
+    }
+
+    @Override
+    public List<EventResponse> getAllEventsByStartTime(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Event> pagedResult = eventRepository.findAllByOrderByStartTime(pageable);
+        return mapToResponse(pagedResult);
+    }
+
+    @Override
+    public List<EventResponse> getEventsByLocation(int pageNo, int pageSize, String city) {
+        Pageable pageable = PageRequest.of(pageNo,pageSize);
+        Page<Event> pagedResult = eventRepository.findByCity(pageable, city);
+        return mapToResponse(pagedResult);
     }
 
     @Override
     public List<EventResponse> getAllByUser(long userId, int pageNo, int pageSize) {
         var pageable = PageRequest.of(pageNo, pageSize);
         Page<Event> pagedResult = eventRepository.getAllEventsByUser(userId, pageable);
-        List<Event> events = pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<>();
-        return events.stream().map(EventMapper::mapEventToEventResponse).collect(Collectors.toList());
+        return mapToResponse(pagedResult);
     }
 
     @Override
@@ -53,7 +65,6 @@ public class EventServiceImpl implements EventService {
         var savedEvent = eventRepository.save(event);
         return EventMapper.mapEventToEventResponse(savedEvent);
     }
-
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -131,4 +142,8 @@ public class EventServiceImpl implements EventService {
         //TODO: Validate that the keys in the map are social media
     }
 
+    private List<EventResponse> mapToResponse(Page<Event> pagedResult){
+        List<Event> events = pagedResult.hasContent() ? pagedResult.getContent() : new ArrayList<>();
+        return events.stream().map(EventMapper::mapEventToEventResponse).collect(Collectors.toList());
+    }
 }

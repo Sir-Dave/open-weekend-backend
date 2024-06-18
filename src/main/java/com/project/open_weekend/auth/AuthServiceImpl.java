@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.project.open_weekend.util.Util.getEnumName;
 
@@ -38,7 +39,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private LoginAttemptService loginAttemptService;
+    private final LoginAttemptService loginAttemptService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -88,7 +89,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
                 encodedPassword,
                 LocalDateTime.now(),
                 role.name(),
-                role.getAuthorities(),
+                List.of(role.getAuthorities()),
                 true,
                 true
         );

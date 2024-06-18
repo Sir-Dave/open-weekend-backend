@@ -1,12 +1,14 @@
 package com.project.open_weekend.user;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.open_weekend.event.Event;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,13 +35,15 @@ public class User {
 
     private String role;
 
-    private String[] authorities;
+    @ElementCollection(targetClass = String.class)
+    private List<String> authorities;
 
     private boolean isActive;
 
     private boolean isNotLocked;
 
     @OneToMany(mappedBy = "creator", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Event> events = new HashSet<>();
 
     public User(
@@ -50,7 +54,7 @@ public class User {
             String password,
             LocalDateTime dateJoined,
             String role,
-            String[] authorities,
+            List<String> authorities,
             boolean isActive,
             boolean isNotLocked
     ){

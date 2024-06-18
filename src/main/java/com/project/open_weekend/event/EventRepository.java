@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import java.util.List;
 
 
 @Repository
@@ -15,9 +14,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e where e.isApproved = true")
     Page<Event> getAllEvents(Pageable pageable);
 
+    Page<Event> findAllByOrderByStartTime(Pageable pageable);
+    Page<Event> findByCity(Pageable pageable, String city);
+
     @Query("SELECT e FROM Event e WHERE e.creator.id = ?1")
     Page<Event> getAllEventsByUser(long userId, Pageable pageable);
 
-    List<Event> findByLocation(String location);
+
     void deleteById(@NonNull Long eventId);
 }
