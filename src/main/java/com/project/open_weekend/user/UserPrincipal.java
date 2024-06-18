@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
 
 public class UserPrincipal implements UserDetails {
     private final User user;
@@ -18,7 +17,7 @@ public class UserPrincipal implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return stream(Objects.requireNonNull(user.getAuthorities())).map(
+        return (Objects.requireNonNull(user.getAuthorities())).stream().map(
                         SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

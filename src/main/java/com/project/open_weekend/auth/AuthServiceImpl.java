@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.project.open_weekend.util.Util.getEnumName;
 
@@ -38,6 +39,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    @Autowired
     private LoginAttemptService loginAttemptService;
 
     @Override
@@ -88,7 +90,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
                 encodedPassword,
                 LocalDateTime.now(),
                 role.name(),
-                role.getAuthorities(),
+                List.of(role.getAuthorities()),
                 true,
                 true
         );

@@ -1,17 +1,17 @@
 package com.project.open_weekend.event;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
-import java.util.Optional;
 
 
 public interface EventService  {
 
-    List<Event> getAllEvents(int pageNo, int pageSize);
+    Page<Event> getAllEventsByStartTime(int pageNo, int pageSize);
+
+    Page<Event> getEventsByLocation(int pageNo, int pageSize, String city);
 
     List<Event> getAllByUser(long userId, int pageNo, int pageSize);
 
-    Event createEvent(Event event);
-    Event updateEvent(Event event);
-    void deleteEventById(Long eventId);
-    Optional<Event> findEventById(Long eventId);
+    Event createEvent(EventRequest eventRequest, String username);
 }

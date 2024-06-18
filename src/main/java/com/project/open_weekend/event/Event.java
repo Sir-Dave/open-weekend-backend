@@ -1,6 +1,7 @@
 package com.project.open_weekend.event;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.open_weekend.user.User;
 import lombok.*;
 
@@ -32,10 +33,13 @@ public class Event {
 
     private String imageUrl;
 
+    private String city;
+
     private String type;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User creator;
 
     @ElementCollection(targetClass = String.class)

@@ -1,7 +1,11 @@
 package com.project.open_weekend.event;
 
+import com.project.open_weekend.user.User;
+import com.project.open_weekend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +17,18 @@ public class EventServiceImpl implements EventService {
 
 
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public List<Event> getAllEvents(int pageNo, int pageSize) {
-        return null;
+    public Page<Event> getAllEventsByStartTime(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return eventRepository.findAllByOrderByStartTime(pageable);
+    }
+
+    @Override
+    public Page<Event> getEventsByLocation(int pageNo, int pageSize, String city) {
+        Pageable pageable = PageRequest.of(pageNo,pageSize);
+        return eventRepository.findByCity(pageable, city);
     }
 
     @Override
@@ -25,28 +37,21 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public Event createEvent(Event event) {
-
+    public Event createEvent(EventRequest eventRequest, String username) {
+        Optional<User> currentUser =  userRepository.findUserByEmail(username);
+        Event event = new Event();
+        event.setName(eventRequest.getName());
+        event.setDescription(eventRequest.getDescription());
+        event.setLocation(eventRequest.getLocation());
+        event.setStartTime(eventRequest.getStartTime());
+        event.setEndTime(eventRequest.getEndTime());
+        event.setImageUrl(eventRequest.getImageUrl());
+        event.setType(eventRequest.getType());
+        event.setTags(eventRequest.getTags());
+        event.setApproved(eventRequest.isApproved());
+        event.setSocialMediaLinks(eventRequest.getSocialMediaLinks());
+        currentUser.ifPresent(event::setCreator);
         return eventRepository.save(event);
-    }
-
-
-    @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Event updateEvent(Event event) {
-        return eventRepository.save(event);
-    }
-
-    @Override
-    public void deleteEventById(Long eventId) {
-        eventRepository.deleteById(eventId);
-    }
-
-    @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public Optional<Event> findEventById(Long eventId) {
-        return eventRepository.findById(eventId);
     }
 
 }
