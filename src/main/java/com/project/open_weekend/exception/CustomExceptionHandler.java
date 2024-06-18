@@ -100,6 +100,12 @@ public class CustomExceptionHandler implements ErrorController {
         return createHttpResponse(HttpStatus.NOT_FOUND, "No mapping found for this url");
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<HttpResponse> illegalStateException(IllegalStateException exception){
+        LOGGER.error(exception.getMessage());
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception){
         LOGGER.error(exception.getMessage());
