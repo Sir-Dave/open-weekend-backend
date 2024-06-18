@@ -22,7 +22,6 @@ public class EventMapper {
                 .creator(creatorName)
                 .tags(event.getTags())
                 .isApproved(event.isApproved())
-                .socialMediaLinks(event.getSocialMedia())
                 .build();
     }
 
@@ -37,7 +36,6 @@ public class EventMapper {
                 .type(eventRequest.getType())
                 .tags(eventRequest.getTags())
                 .isApproved(false)
-                .socialMedia(eventRequest.getSocialMediaLinks())
                 .build();
     }
 }

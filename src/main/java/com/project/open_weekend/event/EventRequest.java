@@ -23,5 +23,4 @@ public class EventRequest {
     private long creatorId;
     private String type;
     private Set<String> tags;
-    private Map<String, String> socialMediaLinks;
 }

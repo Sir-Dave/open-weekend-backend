@@ -90,10 +90,6 @@ public class EventServiceImpl implements EventService {
         if (!eventRequest.getTags().isEmpty())
             event.setTags(eventRequest.getTags());
 
-        if (!eventRequest.getSocialMediaLinks().isEmpty()){
-            validateSocialMediaLinks(eventRequest.getSocialMediaLinks());
-            event.setSocialMedia(eventRequest.getSocialMediaLinks());
-        }
         var updatedEvent = eventRepository.save(event);
         return EventMapper.mapEventToEventResponse(updatedEvent);
     }

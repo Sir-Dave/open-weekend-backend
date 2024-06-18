@@ -3,13 +3,9 @@ package com.project.open_weekend.event;
 
 import com.project.open_weekend.user.User;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -46,11 +42,6 @@ public class Event {
     private Set<String> tags;
 
     private boolean isApproved;
-
-    @Type(type = "json")
-    @Convert(disableConversion = true)
-    @Column(columnDefinition = "jsonb")
-    private Map<String, String> socialMedia = new HashMap<>();
 
     public void addToCreatorEvents(User user){
         user.addEvent(this);

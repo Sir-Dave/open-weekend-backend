@@ -2,7 +2,7 @@ package com.project.open_weekend.event;
 
 import lombok.Builder;
 import lombok.Getter;
-import java.util.Map;
+
 import java.util.Set;
 
 @Getter
@@ -29,5 +29,4 @@ public class EventResponse {
     private Set<String> tags;
 
     private boolean isApproved;
-    private Map<String, String> socialMediaLinks;
 }
