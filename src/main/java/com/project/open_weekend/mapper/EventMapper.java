@@ -1,7 +1,6 @@
 package com.project.open_weekend.mapper;
 
 import com.project.open_weekend.event.Event;
-import com.project.open_weekend.event.EventRequest;
 import com.project.open_weekend.event.EventResponse;
 import com.project.open_weekend.util.Util;
 
@@ -22,20 +21,6 @@ public class EventMapper {
                 .creator(creatorName)
                 .tags(event.getTags())
                 .isApproved(event.isApproved())
-                .build();
-    }
-
-    public static Event mapRequestToEvent(EventRequest eventRequest){
-
-        return Event.builder()
-                .name(eventRequest.getName())
-                .description(eventRequest.getDescription())
-                .location(eventRequest.getLocation())
-                .startTime(Util.getLocalDateTime(eventRequest.getStartTime()))
-                .endTime(Util.getLocalDateTime(eventRequest.getEndTime()))
-                .type(eventRequest.getType())
-                .tags(eventRequest.getTags())
-                .isApproved(false)
                 .build();
     }
 }

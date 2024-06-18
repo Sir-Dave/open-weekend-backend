@@ -1,5 +1,6 @@
 package com.project.open_weekend.event;
 
+import com.project.open_weekend.auth.AuthenticatedUserService;
 import com.project.open_weekend.exception.EntityNotFoundException;
 import com.project.open_weekend.mapper.EventMapper;
 import com.project.open_weekend.user.UserService;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class EventServiceImpl implements EventService {
     @Autowired
     private final EventRepository eventRepository;
     private final UserService userService;
+    private final AuthenticatedUserService authUserService;
 
     @Override
     public List<EventResponse> getAllEvents(int pageNo, int pageSize) {
@@ -56,50 +59,75 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public EventResponse createEvent(EventRequest eventRequest) {
-        var user = userService.findUserById(eventRequest.getCreatorId());
-        var event = EventMapper.mapRequestToEvent(eventRequest);
+    public EventResponse createEvent(
+            String name, String description, String location,
+            String startTime, String endTime, MultipartFile image,
+            String type, Set<String> tags
+    ) {
+        var user = authUserService.getAuthenticatedUser();
+
+        var localDateStartTime = Util.getLocalDateTime(startTime);
+        var localDateEndTime = Util.getLocalDateTime(endTime);
+        validateTimes(localDateStartTime, localDateEndTime);
+
+        var event = Event.builder()
+                .name(name)
+                .description(description)
+                .location(location)
+                .startTime(localDateStartTime)
+                .endTime(localDateEndTime)
+                .type(type)
+                .tags(tags)
+                .isApproved(false)
+                .build();
+
         event.addToCreatorEvents(user);
-        event.setImageUrl(uploadImage(eventRequest.getImage()));
+        event.setImageUrl(uploadImage(image));
         var savedEvent = eventRepository.save(event);
         return EventMapper.mapEventToEventResponse(savedEvent);
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public EventResponse updateEvent(EventRequest eventRequest) {
-        var event = eventRepository.findById(eventRequest.getEventId()).orElseThrow(
-                () -> new EntityNotFoundException(String.format("No event with id %s was found", eventRequest.getEventId()))
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("@authenticatedUserService.hasId(#eventRequest.creatorId)")
+    public EventResponse updateEvent(
+            long eventId, String name, String description,
+            String location, String startTime, String endTime,
+            MultipartFile image, String type, Set<String> tags
+    ) {
+        var event = eventRepository.findById(eventId).orElseThrow(
+                () -> new EntityNotFoundException(String.format("No event with id %s was found", eventId))
         );
 
-        if (eventRequest.getCreatorId() != event.getCreator().getId()){
+        var user = authUserService.getAuthenticatedUser();
+
+        if (user.getId() != event.getCreator().getId()){
             throw new AccessDeniedException("You do not have permission to edit this event");
         }
 
-        if (!eventRequest.getName().isBlank())
-            event.setName(eventRequest.getName());
+        if (!name.isBlank())
+            event.setName(name);
 
-        if (!eventRequest.getDescription().isBlank())
-            event.setDescription(eventRequest.getDescription());
+        if (!description.isBlank())
+            event.setDescription(description);
 
-        if (!eventRequest.getLocation().isBlank())
-            event.setLocation(eventRequest.getLocation());
+        if (!location.isBlank())
+            event.setLocation(location);
 
-        if (eventRequest.getStartTime() != null && eventRequest.getEndTime() != null){
-            var startTime = Util.getLocalDateTime(eventRequest.getStartTime());
-            var endTime = Util.getLocalDateTime(eventRequest.getEndTime());
-            validateTimes(startTime, endTime);
+        if (startTime != null && endTime != null){
+            var localDateStartTime = Util.getLocalDateTime(startTime);
+            var localDateEndTime = Util.getLocalDateTime(endTime);
+            validateTimes(localDateStartTime, localDateEndTime);
         }
 
-        if (eventRequest.getImage() != null)
-            event.setImageUrl(uploadImage(eventRequest.getImage()));
+        if (image != null)
+            event.setImageUrl(uploadImage(image));
 
-        if (!eventRequest.getType().isBlank())
-            event.setType(eventRequest.getType());
+        if (!type.isBlank())
+            event.setType(type);
 
-        if (!eventRequest.getTags().isEmpty())
-            event.setTags(eventRequest.getTags());
+        if (!tags.isEmpty())
+            event.setTags(tags);
 
         var updatedEvent = eventRepository.save(event);
         return EventMapper.mapEventToEventResponse(updatedEvent);

@@ -1,9 +1,9 @@
 package com.project.open_weekend.event;
 
-import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+import java.util.Set;
 
 public interface EventService  {
 
@@ -14,9 +14,16 @@ public interface EventService  {
 
     List<EventResponse> getAllByUser(long userId, int pageNo, int pageSize);
 
-    EventResponse createEvent(EventRequest eventRequest);
-    EventResponse updateEvent(EventRequest eventRequest);
+    EventResponse createEvent(
+            String name, String description, String location,
+            String startTime, String endTime, MultipartFile image,
+            String type, Set<String> tags
+    );
+    EventResponse updateEvent(
+            long eventId, String name,String description,
+            String location, String startTime, String endTime,
+            MultipartFile image, String type, Set<String> tags
+    );
     void deleteEventById(long eventId);
     EventResponse findEventById(long eventId);
-    //Event createEvent(EventRequest eventRequest, String username);
 }
