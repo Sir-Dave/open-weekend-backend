@@ -2,15 +2,15 @@ spring:
   application:
     name: open-weekend
 
-  # config:
-  #   activate:
-  #     on-profile: dev
+  config:
+    activate:
+      on-profile: dev
 
   datasource:
     driverClassName: org.postgresql.Driver
-    url: bold-glade.small-respect-production.svc.pipeops.internal
-    username: postgres
-    password: 8613d89c70253db94c2399c52
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
 
   jpa:
     hibernate:
@@ -32,4 +32,4 @@ server:
 
 
 jwt:
-  secret: "[a-zA-Z0-9._]^*$JwtSecretForOpenWeekendAndOtherSymbols"
+  secret: ${JWT_SECRET}

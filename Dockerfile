@@ -1,5 +1,5 @@
 # Use a slim JDK image for building
-FROM maven:3.8-jdk-11-slim AS build
+FROM maven:3.8-openjdk-18-slim AS build
 
 # Copy project files, excluding unnecessary directories
 COPY . .
