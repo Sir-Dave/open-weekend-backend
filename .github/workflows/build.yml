@@ -1,0 +1,46 @@
+name: Build and Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Grant execute permission for Maven Wrapper
+      run: chmod +x ./mvnw
+
+    - name: Build with Maven
+      env:
+        DB_URL: ${{ secrets.DB_URL }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASS: ${{ secrets.DB_PASS }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: ./mvnw clean package
+
+    - name: Checkout production branch
+      run: git fetch origin production && git checkout production
+
+    - name: Copy JAR file to production directory
+      run: cp target/*.jar production/open-weekend.jar
+
+    - name: Commit and push JAR to production branch
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add production/*.jar
+        git commit -m 'Add new JAR file to production directory'
+        git push origin production
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
